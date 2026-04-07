@@ -1,48 +1,50 @@
 <!DOCTYPE html>
-
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BINGO</title>
+
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&family=Barlow+Condensed:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&family=Barlow+Condensed:wght@500;700&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-–red: #D9232A;
-–black: #111;
-–white: #F5F2EE;
-–cell-bg: #FAFAF8;
-–marked-bg: #D9232A;
-–marked-text: #fff;
-–border: #111;
-–win-glow: #D9232A;
+--red: #D9232A;
+--black: #111;
+--white: #F5F2EE;
+--cell-bg: #1a1a1a;
+--marked-bg: #D9232A;
+--marked-text: #fff;
+--border: #333;
+--win-glow: #D9232A;
 }
 
 body {
-background: #2a2a2a url(“data:image/svg+xml,%3Csvg width=‘40’ height=‘40’ viewBox=‘0 0 40 40’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cg fill=‘none’ fill-rule=‘evenodd’%3E%3Cg fill=’%23ffffff’ fill-opacity=‘0.03’%3E%3Cpath d=‘M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41z’/%3E%3C/g%3E%3C/g%3E%3C/svg%3E”);
+background: linear-gradient(135deg, #000 0%, #2a0000 100%);
 min-height: 100vh;
 display: flex;
 flex-direction: column;
 align-items: center;
 justify-content: center;
-font-family: ‘Barlow Condensed’, sans-serif;
+font-family: 'Barlow Condensed', sans-serif;
 padding: 24px 16px;
 gap: 20px;
 }
 
+/* CARD */
 .card-wrap {
-background: var(–black);
+background: var(--black);
 border-radius: 8px;
 padding: 10px;
-box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 2px #333;
+border: 2px solid var(--red);
+box-shadow: 0 0 25px rgba(217,35,42,0.5), 0 20px 60px rgba(0,0,0,0.9);
 max-width: 600px;
 width: 100%;
 }
 
-/* BINGO Header */
+/* HEADER */
 .bingo-header {
 display: grid;
 grid-template-columns: repeat(5, 1fr);
@@ -51,21 +53,26 @@ margin-bottom: 8px;
 }
 
 .bingo-letter {
-font-family: ‘Oswald’, sans-serif;
+font-family: 'Oswald', sans-serif;
 font-weight: 900;
 font-size: clamp(28px, 6vw, 52px);
 text-align: center;
-padding: 8px 4px 10px;
+padding: 8px;
 border-radius: 4px;
-letter-spacing: 1px;
-line-height: 1;
+border: 2px solid var(--red);
 }
 
-.bingo-letter:nth-child(odd) { background: var(–black); color: var(–white); border: 3px solid #333; }
-.bingo-letter:nth-child(even) { background: var(–red); color: var(–white); }
-.bingo-letter:nth-child(3) { background: var(–white); color: var(–black); }
+.bingo-letter:nth-child(odd) {
+background: #000;
+color: #fff;
+}
 
-/* Grid */
+.bingo-letter:nth-child(even) {
+background: var(--red);
+color: #fff;
+}
+
+/* GRID */
 .bingo-grid {
 display: grid;
 grid-template-columns: repeat(4, 1fr);
@@ -73,67 +80,61 @@ gap: 4px;
 }
 
 .cell {
-background: var(–cell-bg);
-border: 2.5px solid var(–border);
+background: var(--cell-bg);
+border: 2px solid var(--border);
 border-radius: 4px;
 padding: 14px 10px;
 text-align: center;
-font-family: ‘Barlow Condensed’, sans-serif;
 font-weight: 700;
 font-size: clamp(12px, 2.2vw, 17px);
-line-height: 1.25;
 cursor: pointer;
-user-select: none;
-transition: background 0.15s, color 0.15s, transform 0.1s, box-shadow 0.15s;
 min-height: 80px;
 display: flex;
 align-items: center;
 justify-content: center;
 position: relative;
-overflow: hidden;
+color: #fff;
+transition: all 0.15s;
 }
 
 .cell::after {
-content: ‘✓’;
+content: '✓';
 position: absolute;
-top: 4px; right: 6px;
+top: 4px;
+right: 6px;
 font-size: 18px;
-font-weight: 900;
 opacity: 0;
 transition: opacity 0.15s;
-color: rgba(255,255,255,0.6);
 }
 
 .cell:hover:not(.marked) {
-background: #efefef;
-transform: scale(1.02);
-box-shadow: 0 4px 14px rgba(0,0,0,0.2);
-z-index: 1;
+background: #2a2a2a;
+transform: scale(1.03);
 }
 
 .cell.marked {
-background: var(–marked-bg);
-color: var(–marked-text);
-border-color: #8b0000;
+background: var(--red);
+color: #fff;
+border-color: #ff0000;
 transform: scale(0.97);
 }
 
-.cell.marked::after { opacity: 1; }
+.cell.marked::after {
+opacity: 1;
+}
 
 .cell.winning {
-animation: win-pulse 0.6s ease-in-out infinite alternate;
+animation: win-pulse 0.6s infinite alternate;
 }
 
 @keyframes win-pulse {
 from { box-shadow: 0 0 0 0 rgba(217,35,42,0.7); }
-to   { box-shadow: 0 0 0 10px rgba(217,35,42,0); }
+to   { box-shadow: 0 0 0 12px rgba(217,35,42,0); }
 }
 
-/* Bottom bar */
+/* CONTROLS */
 .controls {
 display: flex;
-gap: 12px;
-align-items: center;
 justify-content: space-between;
 width: 100%;
 max-width: 600px;
@@ -141,96 +142,69 @@ max-width: 600px;
 
 .status {
 color: #ccc;
-font-family: ‘Barlow Condensed’, sans-serif;
-font-weight: 500;
 font-size: 15px;
-letter-spacing: 0.5px;
 }
 
 .status span {
-color: var(–red);
+color: var(--red);
 font-weight: 700;
 }
 
 .reset-btn {
-font-family: ‘Oswald’, sans-serif;
-font-weight: 700;
-font-size: 15px;
-letter-spacing: 1.5px;
-text-transform: uppercase;
+font-family: 'Oswald', sans-serif;
 background: transparent;
 color: #aaa;
 border: 2px solid #555;
 padding: 8px 20px;
-border-radius: 4px;
 cursor: pointer;
-transition: all 0.15s;
 }
 
 .reset-btn:hover {
-background: var(–red);
+background: var(--red);
 color: #fff;
-border-color: var(–red);
+border-color: var(--red);
 }
 
-/* Win overlay */
+/* WIN SCREEN */
 .win-banner {
 display: none;
 position: fixed;
 inset: 0;
-background: rgba(0,0,0,0.82);
+background: rgba(0,0,0,0.9);
 z-index: 100;
 flex-direction: column;
 align-items: center;
 justify-content: center;
-gap: 20px;
 }
 
-.win-banner.show { display: flex; }
+.win-banner.show {
+display: flex;
+}
 
 .win-text {
-font-family: ‘Oswald’, sans-serif;
-font-weight: 900;
+font-family: 'Oswald', sans-serif;
 font-size: clamp(60px, 18vw, 130px);
-color: var(–red);
-letter-spacing: 8px;
-text-shadow: 0 0 60px rgba(217,35,42,0.6), 4px 4px 0 #000;
-animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+color: var(--red);
+text-shadow: 0 0 40px red, 0 0 80px rgba(217,35,42,0.8);
 }
 
 .win-sub {
 color: #fff;
-font-family: ‘Barlow Condensed’, sans-serif;
 font-size: 20px;
-letter-spacing: 2px;
-text-transform: uppercase;
+margin-top: 10px;
 }
 
 .win-close {
-font-family: ‘Oswald’, sans-serif;
-font-weight: 700;
-font-size: 16px;
-letter-spacing: 2px;
-text-transform: uppercase;
-background: var(–red);
+margin-top: 20px;
+background: var(--red);
 color: #fff;
 border: none;
-padding: 12px 36px;
-border-radius: 4px;
+padding: 12px 30px;
 cursor: pointer;
-margin-top: 10px;
-transition: background 0.15s;
-}
-
-.win-close:hover { background: #b01a1f; }
-
-@keyframes pop {
-0% { transform: scale(0.3) rotate(-8deg); opacity: 0; }
-100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 </style>
-
 </head>
+
 <body>
 
 <div class="card-wrap">
@@ -241,12 +215,13 @@ transition: background 0.15s;
     <div class="bingo-letter">G</div>
     <div class="bingo-letter">O</div>
   </div>
+
   <div class="bingo-grid" id="grid"></div>
 </div>
 
 <div class="controls">
   <div class="status">Zaznaczono: <span id="count">0</span> / 16</div>
-  <button class="reset-btn" onclick="reset()">↺ Reset</button>
+  <button class="reset-btn" onclick="reset()">Reset</button>
 </div>
 
 <div class="win-banner" id="winBanner">
@@ -256,101 +231,98 @@ transition: background 0.15s;
 </div>
 
 <script>
-  const items = [
-    "Goat hypuje\nKachelka",
-    "Rage na\nsędziów",
-    "Szefowa\nbrawo",
-    "Goat Adam",
-    "Interakcja\nz ludźmi",
-    "Goat chwali\nKachelka",
-    "Odwrócenie się\ndo kogoś",
-    "Goat Chylu",
-    "Kimbrough\nprzeszkadza",
-    "Andrzejewski\ndunk",
-    "Gruszecki\n<3 lub >14",
-    "Ziemo\nz browarem",
-    "Szerszeń\nspawn",
-    "FT między\nkwartami",
-    "67 na\ntablicy",
-    "Dziadziuś w\nkurtce PSG"
-  ];
+const items = [
+"Goat hypuje\nKachelka",
+"Rage na\nsędziów",
+"Szefowa\nbrawo",
+"Goat Adam",
+"Interakcja\nz ludźmi",
+"Goat chwali\nKachelka",
+"Odwrócenie się\ndo kogoś",
+"Goat Chylu",
+"Kimbrough\nprzeszkadza",
+"Andrzejewski\ndunk",
+"Gruszecki\n<3 lub >14",
+"Ziemo\nz browarem",
+"Szerszeń\nspawn",
+"FT między\nkwartami",
+"67 na\ntablicy",
+"Dziadziuś w\nkurtce PSG"
+];
 
-  const COLS = 4;
-  const ROWS = 4;
-  let marked = new Array(16).fill(false);
-  let wonLines = new Set();
+const COLS = 4;
+const ROWS = 4;
+let marked = new Array(16).fill(false);
+let wonLines = new Set();
 
-  const grid = document.getElementById('grid');
-  const countEl = document.getElementById('count');
-  const winBanner = document.getElementById('winBanner');
+const grid = document.getElementById('grid');
+const countEl = document.getElementById('count');
+const winBanner = document.getElementById('winBanner');
 
-  function render() {
-    grid.innerHTML = '';
-    items.forEach((text, i) => {
-      const cell = document.createElement('div');
-      cell.className = 'cell' + (marked[i] ? ' marked' : '');
-      cell.innerHTML = text.replace(/\n/g, '<br>');
-      cell.onclick = () => toggle(i);
-      grid.appendChild(cell);
-    });
-    countEl.textContent = marked.filter(Boolean).length;
-    checkWin();
-  }
+function render() {
+grid.innerHTML = '';
+items.forEach((text, i) => {
+const cell = document.createElement('div');
+cell.className = 'cell' + (marked[i] ? ' marked' : '');
+cell.innerHTML = text.replace(/\n/g, '<br>');
+cell.onclick = () => toggle(i);
+grid.appendChild(cell);
+});
+countEl.textContent = marked.filter(Boolean).length;
+checkWin();
+}
 
-  function toggle(i) {
-    marked[i] = !marked[i];
-    render();
-  }
+function toggle(i) {
+marked[i] = !marked[i];
+render();
+}
 
-  function getLines() {
-    const lines = [];
-    // Rows
-    for (let r = 0; r < ROWS; r++) {
-      lines.push([r*COLS, r*COLS+1, r*COLS+2, r*COLS+3]);
-    }
-    // Cols
-    for (let c = 0; c < COLS; c++) {
-      lines.push([c, c+COLS, c+COLS*2, c+COLS*3]);
-    }
-    // Diagonals
-    lines.push([0,5,10,15]);
-    lines.push([3,6,9,12]);
-    return lines;
-  }
+function getLines() {
+const lines = [];
+for (let r = 0; r < ROWS; r++) {
+lines.push([r*COLS, r*COLS+1, r*COLS+2, r*COLS+3]);
+}
+for (let c = 0; c < COLS; c++) {
+lines.push([c, c+COLS, c+COLS*2, c+COLS*3]);
+}
+lines.push([0,5,10,15]);
+lines.push([3,6,9,12]);
+return lines;
+}
 
-  function checkWin() {
-    const lines = getLines();
-    let newWin = false;
-    const cells = grid.querySelectorAll('.cell');
+function checkWin() {
+const lines = getLines();
+let newWin = false;
+const cells = grid.querySelectorAll('.cell');
 
-    lines.forEach(line => {
-      const key = line.join(',');
-      if (line.every(i => marked[i])) {
-        if (!wonLines.has(key)) {
-          wonLines.add(key);
-          newWin = true;
-        }
-        line.forEach(i => cells[i] && cells[i].classList.add('winning'));
-      }
-    });
+lines.forEach(line => {
+const key = line.join(',');
+if (line.every(i => marked[i])) {
+if (!wonLines.has(key)) {
+wonLines.add(key);
+newWin = true;
+}
+line.forEach(i => cells[i] && cells[i].classList.add('winning'));
+}
+});
 
-    if (newWin) {
-      setTimeout(() => winBanner.classList.add('show'), 200);
-    }
-  }
+if (newWin) {
+setTimeout(() => winBanner.classList.add('show'), 200);
+}
+}
 
-  function closeWin() {
-    winBanner.classList.remove('show');
-  }
+function closeWin() {
+winBanner.classList.remove('show');
+}
 
-  function reset() {
-    marked = new Array(16).fill(false);
-    wonLines.clear();
-    winBanner.classList.remove('show');
-    render();
-  }
+function reset() {
+marked = new Array(16).fill(false);
+wonLines.clear();
+winBanner.classList.remove('show');
+render();
+}
 
-  render();
+render();
 </script>
 
 </body>
