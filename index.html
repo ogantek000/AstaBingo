@@ -1,359 +1,148 @@
 <!DOCTYPE html>
-
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BINGO</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-–red: #E8202A;
-–red-dark: #9e0a10;
-–red-glow: rgba(232,32,42,0.6);
-–black: #0a0a0a;
-–surface: #141414;
-–surface2: #1e1e1e;
-–border: #2a2a2a;
-–text: #f0ece6;
-–muted: #888;
+  --red: #E8202A;
+  --red-dark: #9e0a10;
+  --red-glow: rgba(232,32,42,0.6);
+  --black: #0a0a0a;
+  --surface: #141414;
+  --surface2: #1e1e1e;
+  --border: #2a2a2a;
+  --text: #f0ece6;
+  --muted: #888;
 }
 
 body {
-background: var(–black);
-min-height: 100vh;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-font-family: ‘Barlow Condensed’, sans-serif;
-padding: 20px 16px;
-gap: 0;
-overflow-x: hidden;
+  background: var(--black);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  padding: 20px;
 }
 
-/* Background noise texture */
-body::before {
-content: ‘’;
-position: fixed;
-inset: 0;
-background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’ opacity=‘0.04’/%3E%3C/svg%3E”);
-pointer-events: none;
-z-index: 0;
-}
-
-/* Vignette */
-body::after {
-content: ‘’;
-position: fixed;
-inset: 0;
-background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
-pointer-events: none;
-z-index: 0;
-}
-
+/* CARD */
 .card-wrap {
-position: relative;
-z-index: 1;
-width: 100%;
-max-width: 560px;
-background: var(–surface);
-border-radius: 4px;
-border: 1px solid #2a2a2a;
-box-shadow:
-0 0 0 1px rgba(232,32,42,0.2),
-0 0 40px rgba(232,32,42,0.15),
-0 30px 80px rgba(0,0,0,0.8);
-overflow: hidden;
+  width: 100%;
+  max-width: 560px;
+  background: var(--surface);
+  border: 1px solid var(--border);
 }
 
-/* PHOTO */
 .card-photo {
-width: 100%;
-display: block;
-object-fit: cover;
-max-height: 220px;
-border-bottom: 1px solid #2a2a2a;
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
 }
 
-.save-btn {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 15px;
-letter-spacing: 0.1em;
-background: transparent;
-color: #555;
-border: 1px solid #333;
-padding: 7px 16px;
-border-radius: 3px;
-cursor: pointer;
-transition: all 0.15s;
-margin-right: 8px;
-}
-
-.save-btn:hover {
-background: #333;
-color: #fff;
-border-color: #555;
-}
-
-/* TOP STRIPE */
 .top-stripe {
-height: 4px;
-background: var(–red);
+  height: 4px;
+  background: var(--red);
+}
+
+.card-inner {
+  padding: 16px;
 }
 
 /* HEADER */
-.card-inner {
-padding: 16px;
-}
-
 .bingo-header {
-display: grid;
-grid-template-columns: repeat(5, 1fr);
-gap: 6px;
-margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: repeat(5,1fr);
+  gap: 6px;
+  margin-bottom: 16px;
 }
 
 .bingo-letter {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: clamp(34px, 7vw, 58px);
-letter-spacing: 0.04em;
-text-align: center;
-padding: 10px 4px;
-border-radius: 3px;
-user-select: none;
-position: relative;
-overflow: hidden;
-transition: transform 0.2s;
+  font-family: 'Bebas Neue';
+  font-size: 40px;
+  text-align: center;
+  padding: 10px;
 }
 
 .bingo-letter:nth-child(odd) {
-background: #000;
-color: var(–text);
-border: 1px solid #2a2a2a;
+  background: black;
+  color: white;
 }
 
 .bingo-letter:nth-child(even) {
-background: var(–red);
-color: #fff;
+  background: var(--red);
+  color: white;
 }
 
 /* GRID */
 .bingo-grid {
-display: grid;
-grid-template-columns: repeat(4, 1fr);
-gap: 5px;
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 6px;
 }
 
 .cell {
-background: var(–surface2);
-border: 1px solid var(–border);
-border-radius: 3px;
-padding: 10px 8px;
-text-align: center;
-font-weight: 600;
-font-size: clamp(11px, 2vw, 15px);
-line-height: 1.3;
-cursor: pointer;
-min-height: 76px;
-display: flex;
-align-items: center;
-justify-content: center;
-position: relative;
-color: #ccc;
-transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
-letter-spacing: 0.01em;
-}
-
-.cell:hover:not(.marked) {
-background: #252525;
-border-color: #444;
-color: var(–text);
-transform: translateY(-1px);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  color: #ccc;
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cell.marked {
-background: var(–red);
-color: #fff;
-border-color: var(–red-dark);
-font-weight: 700;
+  background: var(--red);
+  color: white;
 }
 
-.cell.marked .check {
-opacity: 1;
-transform: scale(1);
-}
-
-.check {
-position: absolute;
-top: 5px;
-right: 6px;
-font-size: 13px;
-opacity: 0;
-transform: scale(0);
-transition: opacity 0.2s, transform 0.2s;
-line-height: 1;
-color: rgba(255,255,255,0.8);
-}
-
-/* BOTTOM BAR */
+/* BOTTOM */
 .bottom-bar {
-position: relative;
-z-index: 1;
-width: 100%;
-max-width: 560px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 12px 0;
+  max-width: 560px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-.status {
-color: var(–muted);
-font-size: 13px;
-letter-spacing: 0.08em;
-text-transform: uppercase;
-}
-
-.status strong {
-color: var(–red);
-font-weight: 700;
-}
-
-/* Progress bar */
 .progress-wrap {
-flex: 1;
-margin: 0 16px;
-height: 3px;
-background: #222;
-border-radius: 2px;
-overflow: hidden;
+  flex: 1;
+  height: 4px;
+  background: #222;
 }
 
 .progress-bar {
-height: 100%;
-background: var(–red);
-border-radius: 2px;
-transition: width 0.3s ease;
-width: 0%;
+  height: 100%;
+  background: var(--red);
+  width: 0%;
 }
 
-.reset-btn {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 15px;
-letter-spacing: 0.1em;
-background: transparent;
-color: #555;
-border: 1px solid #333;
-padding: 7px 16px;
-border-radius: 3px;
-cursor: pointer;
-transition: all 0.15s;
-}
-
-.reset-btn:hover {
-background: var(–red);
-color: #fff;
-border-color: var(–red);
-}
-
-/* WIN SCREEN */
-.win-banner {
-display: none;
-position: fixed;
-inset: 0;
-background: rgba(0,0,0,0.92);
-z-index: 200;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-gap: 8px;
-}
-
-.win-banner.show {
-display: flex;
-animation: fade-in 0.3s ease;
-}
-
-@keyframes fade-in {
-from { opacity: 0; transform: scale(0.96); }
-to   { opacity: 1; transform: scale(1); }
-}
-
-.win-text {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: clamp(80px, 22vw, 160px);
-color: var(–red);
-letter-spacing: 0.06em;
-line-height: 1;
-text-shadow:
-0 0 30px var(–red-glow),
-0 0 80px var(–red-glow),
-0 0 120px rgba(232,32,42,0.3);
-animation: flicker 3s ease-in-out infinite;
-}
-
-@keyframes flicker {
-0%,100% { opacity: 1; }
-92% { opacity: 1; }
-93% { opacity: 0.85; }
-94% { opacity: 1; }
-96% { opacity: 0.9; }
-97% { opacity: 1; }
-}
-
-.win-sub {
-color: #888;
-font-size: 16px;
-letter-spacing: 0.25em;
-text-transform: uppercase;
-font-weight: 600;
-margin-bottom: 12px;
-}
-
-.win-close {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 16px;
-letter-spacing: 0.15em;
-background: var(–red);
-color: #fff;
-border: none;
-padding: 12px 36px;
-border-radius: 3px;
-cursor: pointer;
-transition: background 0.15s;
-}
-
-.win-close:hover {
-background: #c01a20;
-}
-
-/* Confetti particles */
-.confetti-container {
-position: fixed;
-inset: 0;
-pointer-events: none;
-z-index: 199;
-}
-
-.confetti-particle {
-position: absolute;
-width: 8px;
-height: 8px;
-opacity: 0;
+button {
+  padding: 6px 12px;
+  cursor: pointer;
 }
 </style>
-
 </head>
+
 <body>
 
 <div class="card-wrap" id="cardWrap">
   <div class="top-stripe"></div>
-  <img src="IMG_2834.png" class="card-photo" alt="">
+  <img src="IMG_2834.png" class="card-photo">
+
   <div class="card-inner">
     <div class="bingo-header">
       <div class="bingo-letter">B</div>
@@ -362,133 +151,48 @@ opacity: 0;
       <div class="bingo-letter">G</div>
       <div class="bingo-letter">O</div>
     </div>
+
     <div class="bingo-grid" id="grid"></div>
   </div>
 </div>
 
 <div class="bottom-bar">
-  <div class="status"><strong id="count">0</strong>/16</div>
-  <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
-  <button class="save-btn" onclick="saveImage()">Zapisz</button>
-  <button class="reset-btn" onclick="reset()">Reset</button>
-</div>
-
-<div class="confetti-container" id="confettiContainer"></div>
-
-<div class="win-banner" id="winBanner">
-  <div class="win-text">BINGO!</div>
-  <button class="win-close" onclick="closeWin()">Graj dalej</button>
+  <div id="count">0</div>
+  <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
+  <button onclick="reset()">Reset</button>
 </div>
 
 <script>
 const items = [
-  "Goat hypuje\nKachelka",
-  "Rage na\nsędziów",
-  "Szefowa\nbrawo",
-  "Goat Adam",
-  "Interakcja\nz ludźmi",
-  "Goat chwali\nKachelka",
-  "Odwrócenie się\ndo kogoś",
-  "Goat Chylu",
-  "Kimbrough\nprzeszkadza",
-  "Andrzejewski\ndunk",
-  "Gruszecki\n<3 lub >14",
-  "Ziemo\nz browarem",
-  "Szerszeń\nspawn",
-  "FT między\nkwartami",
-  "67 na\ntablicy",
-  "Dziadziuś w\nkurtce PSG"
+"Goat hypuje Kachelka","Rage na sędziów","Szefowa brawo","Goat Adam",
+"Interakcja z ludźmi","Goat chwali Kachelka","Odwrócenie się","Goat Chylu",
+"Kimbrough przeszkadza","Andrzejewski dunk","Gruszecki <3",
+"Ziemo z browarem","Szerszeń spawn","FT między kwartami",
+"67 na tablicy","Dziadziuś PSG"
 ];
 
-const COLS = 4, ROWS = 4;
 let marked = new Array(16).fill(false);
 
-const grid = document.getElementById('grid');
-const countEl = document.getElementById('count');
-const progressBar = document.getElementById('progressBar');
-const winBanner = document.getElementById('winBanner');
+function render(){
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
 
-function render() {
-  grid.innerHTML = '';
-  items.forEach((text, i) => {
-    const cell = document.createElement('div');
-    cell.className = 'cell' + (marked[i] ? ' marked' : '');
-    cell.innerHTML = `<span class="check">✓</span>${text.replace(/\n/g, '<br>')}`;
-    cell.onclick = () => toggle(i);
-    grid.appendChild(cell);
+  items.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="cell"+(marked[i]?" marked":"");
+    d.innerHTML=t;
+    d.onclick=()=>{marked[i]=!marked[i];render();};
+    grid.appendChild(d);
   });
-  const n = marked.filter(Boolean).length;
-  countEl.textContent = n;
-  progressBar.style.width = (n / 16 * 100) + '%';
-  checkWin();
+
+  const n = marked.filter(x=>x).length;
+  document.getElementById("count").innerText = n;
+  document.getElementById("progressBar").style.width = (n/16*100)+"%";
 }
 
-function toggle(i) {
-  marked[i] = !marked[i];
+function reset(){
+  marked.fill(false);
   render();
-}
-
-function checkWin() {
-  if (marked.every(Boolean)) {
-    setTimeout(() => { winBanner.classList.add('show'); spawnConfetti(); }, 300);
-  }
-}
-
-function closeWin() { winBanner.classList.remove('show'); }
-
-function reset() {
-  marked = new Array(16).fill(false);
-  winBanner.classList.remove('show');
-  document.getElementById('confettiContainer').innerHTML = '';
-  render();
-}
-
-function saveImage() {
-  html2canvas(document.getElementById('cardWrap'), {
-    backgroundColor: '#141414',
-    scale: 2,
-    useCORS: true,
-    allowTaint: true
-  }).then(canvas => {
-    const link = document.createElement('a');
-    link.download = 'bingo.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-  });
-}
-
-// Minimal confetti
-function spawnConfetti() {
-  const container = document.getElementById('confettiContainer');
-  container.innerHTML = '';
-  const colors = ['#E8202A','#fff','#ff6b6b','#ffd700'];
-  for (let i = 0; i < 60; i++) {
-    const el = document.createElement('div');
-    el.className = 'confetti-particle';
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    const x = Math.random() * 100;
-    const delay = Math.random() * 0.8;
-    const dur = 1.5 + Math.random() * 1.5;
-    const rot = Math.random() * 720 - 360;
-    const isRect = Math.random() > 0.5;
-    el.style.cssText = `
-      left:${x}vw; top:-10px;
-      background:${color};
-      border-radius:${isRect ? '1px' : '50%'};
-      width:${isRect ? '6px' : '7px'};
-      height:${isRect ? '10px' : '7px'};
-      animation: fall ${dur}s ${delay}s ease-in forwards;
-    `;
-    container.appendChild(el);
-  }
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes fall {
-      0%   { opacity:1; transform: translateY(0) rotate(0deg); }
-      100% { opacity:0; transform: translateY(110vh) rotate(${Math.random()*720}deg); }
-    }
-  `;
-  container.appendChild(style);
 }
 
 render();
